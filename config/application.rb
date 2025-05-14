@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative "boot"
 
 require "rails"
@@ -44,9 +46,16 @@ module TravelbuddyApi
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
 
+    # Generators
     config.generators do |generate|
       generate.orm :active_record, primary_key_type: :uuid
       generate.test_framework :rspec
     end
+
+
+    # Middleware for cookies
+    config.session_store :cookie_store, key: "_travelbuddy_api_session", httponly: true, same_site: :strict, secure: true
+    config.middleware.use ActionDispatch::Cookies
+    config.middleware.use config.session_store, config.session_options
   end
 end
