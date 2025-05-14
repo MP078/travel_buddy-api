@@ -23,16 +23,24 @@
 #
 class Post < ApplicationRecord
   belongs_to :user
+
   has_many :post_tags
   has_many :tags, through: :post_tags
-
+  has_many :likes, as: :likeable, dependent: :destroy
   has_many_attached :images, dependent: :destroy
 
   validates :end_date, presence: true, if: -> { start_date.present? }
 
   def images_urls
     return [] unless images.attached?
-
     images.map { |image| url_for(image) }
+  end
+
+  def likes_count
+    likes.count
+  end
+
+  def liked?(user)
+    likes.exists?(user_id: user.id)
   end
 end

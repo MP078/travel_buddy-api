@@ -8,3 +8,5 @@ json.images do
 end
 json.user post.user, partial: "users/user", as: :user
 json.tags post.tags, partial: "tags/tag", as: :tag
+json.likes post.likes_count
+json.liked post.liked?(current_user)
