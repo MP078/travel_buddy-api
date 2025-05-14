@@ -41,7 +41,8 @@ group :development, :test do
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
   gem "brakeman", require: false
   gem "rubocop-rails-omakase", require: false
-  gem "byebug"
+  gem "pry-rails"
+  gem "pry-byebug"
 end
 
 group :development do

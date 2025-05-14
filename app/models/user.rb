@@ -32,7 +32,7 @@
 #  index_users_on_uid_and_provider      (uid,provider) UNIQUE
 #  index_users_on_username              (username) UNIQUE
 #
-class User < ActiveRecord::Base
+class User < ApplicationRecord
   extend Devise::Models
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
