@@ -19,7 +19,11 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :comments, only: [] do
+  resources :comments, only: %i[like unlike] do
+    member do
+      post "like"
+      delete "unlike"
+    end
     resources :replies, only: [:create], controller: "comments/replies"
   end
 
