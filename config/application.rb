@@ -54,7 +54,6 @@ module TravelbuddyApi
 
 
     # Middleware for cookies
-    config.api_only = true
     config.session_store :cookie_store, key: "_travelbuddy_api_session", httponly: true, same_site: :strict, secure: true
     config.middleware.use ActionDispatch::Cookies
     config.middleware.use config.session_store, config.session_options
