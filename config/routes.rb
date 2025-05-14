@@ -9,6 +9,8 @@ Rails.application.routes.draw do
   # User routes
   resources :users, param: :username, only: %i[index show update]
 
+  resources :friendships, only: [:create, :update, :destroy, :index]
+
   # User posts routes
   resources :posts do
     resources :comments, only: [:index, :create], module: :posts
