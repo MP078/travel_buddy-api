@@ -31,8 +31,8 @@ class Post < ApplicationRecord
   validates :end_date, presence: true, if: -> { start_date.present? }
 
   def images_urls
-    images.attached? && images.map do |image|
-      url_for(image)
-    end
+    return [] unless images.attached?
+
+    images.map { |image| url_for(image) }
   end
 end

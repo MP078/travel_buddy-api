@@ -7,7 +7,7 @@ class PostsController < ApplicationController
   # GET /posts
   # GET /posts.json
   def index
-    @posts = Post.all
+    @posts = Post.all.includes(:user, :tags).order(created_at: :desc)
   end
 
   # GET /posts/1
@@ -52,7 +52,7 @@ class PostsController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_post
-      @post = Post.find(params.expect(:id))
+      @post = Post.includes(:user, :tags).find(params[:id])
     end
 
     def post_params
