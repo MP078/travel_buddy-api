@@ -64,11 +64,10 @@ class User < ActiveRecord::Base
     end
 
     candidate = base
-    suffix = 1
 
     while self.class.exists?(username: candidate)
-      candidate = "#{base}_#{suffix}"
-      suffix += 1
+      hex = SecureRandom.hex(2)
+      candidate = "#{base}_#{hex}"
     end
 
     self.username = candidate
