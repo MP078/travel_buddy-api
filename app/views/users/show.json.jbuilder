@@ -1,3 +1,5 @@
 # frozen_string_literal: true
 
-json.partial! "users/user", user: @user
+json.message "User details fetched successfully"
+
+json.data @user, partial: 'users/user', as: :user

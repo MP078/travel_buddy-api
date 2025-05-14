@@ -14,6 +14,11 @@ class UsersController < ApplicationController
   end
 
   def show
+    if @user.nil?
+      render json: { error: "User not found" }, status: :not_found
+    else
+      render :show, status: :ok
+    end
   end
 
   def update

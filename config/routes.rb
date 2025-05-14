@@ -7,7 +7,7 @@ Rails.application.routes.draw do
   }
 
   # User routes
-  resources :users, only: %i[index show update]
+  resources :users, param: :username, only: %i[index show update]
 
   # Rails health check
   get "up" => "rails/health#show", as: :rails_health_check
