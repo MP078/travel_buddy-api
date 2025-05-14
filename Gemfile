@@ -32,10 +32,25 @@ gem "image_processing", "~> 1.2"
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin Ajax possible
 gem "rack-cors"
 
+# devise for authentication
+gem "devise_token_auth"
+# dotenv-rails for environment variables
+gem "dotenv-rails"
+
 group :development, :test do
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
   gem "brakeman", require: false
   gem "rubocop-rails-omakase", require: false
+  gem "byebug"
+end
+
+group :development do
+  gem "listen", "~> 3.0.5"
+  gem "web-console", ">= 4.1.0"
+  gem "rubocop"
+  gem "rubocop-performance"
+  gem "rubocop-rails"
+  gem "annotaterb", "~> 4.14"
 end
 
 
