@@ -11,7 +11,12 @@ Rails.application.routes.draw do
   resources :users, param: :username, only: %i[index show update]
 
   # User posts routes
-  resources :posts
+  resources :posts do
+    member do
+      post 'like'
+      delete 'unlike'
+    end
+  end
 
   # Rails health check
   get "up" => "rails/health#show", as: :rails_health_check

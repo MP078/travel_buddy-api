@@ -2,7 +2,7 @@
 
 class PostsController < ApplicationController
   before_action :authenticate_user!, only: %i[ create update destroy ]
-  before_action :set_post, only: %i[ show update destroy ]
+  before_action :set_post, only: %i[ show update destroy like unlike ]
 
   # GET /posts
   # GET /posts.json
@@ -37,6 +37,9 @@ class PostsController < ApplicationController
   # PATCH/PUT /posts/1.json
   def update
     if @post.update(post_params)
+      # Synchronize tags
+      new_tags = tags_param.map { |tag_name| Tag.find_or_create_by(tag: tag_name.strip.downcase) }
+      @post.tags = new_tags
       render :show, status: :ok, location: @post
     else
       render json: @post.errors, status: :unprocessable_entity
@@ -47,6 +50,31 @@ class PostsController < ApplicationController
   # DELETE /posts/1.json
   def destroy
     @post.destroy!
+    head :no_content
+  rescue ActiveRecord::RecordNotDestroyed => e
+    render json: { error: e.message }, status: :unprocessable_entity
+  end
+
+  def like
+    like = @post.likes.find_or_initialize_by(user: current_user)
+
+    if like.persisted?
+      render json: { liked: true, message: "Already liked" }, status: :ok
+    elsif like.save
+      render json: { liked: true, message: "Post liked" }, status: :created
+    else
+      render json: { errors: like.errors.full_messages }, status: :unprocessable_entity
+    end
+  end
+
+  def unlike
+    like = @post.likes.find_by(user: current_user)
+
+    if like&.destroy
+      render json: { liked: false, message: "Post unliked" }, status: :ok
+    else
+      render json: { message: "Like not found" }, status: :not_found
+    end
   end
 
   private
