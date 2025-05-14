@@ -2,4 +2,4 @@
 
 json.message "User details fetched successfully"
 
-json.data @user, partial: 'users/user', as: :user
+json.data @user, partial: "users/user", as: :user
