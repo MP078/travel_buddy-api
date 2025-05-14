@@ -11,9 +11,7 @@
 #  confirmed_at           :datetime
 #  email                  :string
 #  encrypted_password     :string           default(""), not null
-#  image                  :string
 #  name                   :string
-#  nickname               :string
 #  provider               :string           default("email"), not null
 #  remember_created_at    :datetime
 #  reset_password_sent_at :datetime
@@ -21,6 +19,7 @@
 #  tokens                 :json
 #  uid                    :string           default(""), not null
 #  unconfirmed_email      :string
+#  username               :string           not null
 #  verified               :boolean          default(FALSE)
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
@@ -31,11 +30,47 @@
 #  index_users_on_email                 (email) UNIQUE
 #  index_users_on_reset_password_token  (reset_password_token) UNIQUE
 #  index_users_on_uid_and_provider      (uid,provider) UNIQUE
+#  index_users_on_username              (username) UNIQUE
 #
 class User < ActiveRecord::Base
-  # Include default devise modules. Others available are:
-  # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
+  extend Devise::Models
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
   include DeviseTokenAuth::Concerns::User
+
+  has_one_attached :avatar, dependent: :destroy
+
+
+  validates :username, presence: true, uniqueness: { case_sensitive: false }
+
+  before_validation :ensure_username
+
+  def avatar_url
+    avatar.attached? && url_for(avatar)
+  end
+
+
+  private
+
+  def ensure_username
+    return if self.username.present?
+
+    base = if self.name.present?
+      self.name.parameterize(separator: "_")
+    elsif self.email.present?
+      self.email.split("@").first.parameterize(separator: "_")
+    else
+      "user"
+    end
+
+    candidate = base
+    suffix = 1
+
+    while self.class.exists?(username: candidate)
+      candidate = "#{base}_#{suffix}"
+      suffix += 1
+    end
+
+    self.username = candidate
+  end
 end
