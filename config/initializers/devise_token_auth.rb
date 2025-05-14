@@ -17,24 +17,24 @@ DeviseTokenAuth.setup do |config|
   # to 31. It is recommended to not use a value more than 10 in other environments.
   config.token_cost = Rails.env.test? ? 4 : 10
 
-    # Sets the max number of concurrent devices per user, which is 10 by default.
-    # After this limit is reached, the oldest tokens will be removed.
-    # config.max_number_of_devices = 10
+  # Sets the max number of concurrent devices per user, which is 10 by default.
+  # After this limit is reached, the oldest tokens will be removed.
+  # config.max_number_of_devices = 10
 
-    # Sometimes it's necessary to make several requests to the API at the same
-    # time. In this case, each request in the batch will need to share the same
-    # auth token. This setting determines how far apart the requests can be while
-    # still using the same auth token.
-    # config.batch_request_buffer_throttle = 5.seconds
+  # Sometimes it's necessary to make several requests to the API at the same
+  # time. In this case, each request in the batch will need to share the same
+  # auth token. This setting determines how far apart the requests can be while
+  # still using the same auth token.
+  # config.batch_request_buffer_throttle = 5.seconds
 
-    # Cookies
-    config.cookie_enabled = true
-    config.cookie_attributes = {
-      httponly: true,
-      encrypt: true,
-      same_site: :strict,
-      secure: true
-    }
+  # Cookies
+  config.cookie_enabled = true
+  config.cookie_attributes = {
+    httponly: true,
+    encrypt: true,
+    same_site: :strict,
+    secure: true
+  }
 
   # This route will be the prefix for all oauth2 redirect callbacks. For
   # example, using the default '/omniauth', the github oauth2 provider will

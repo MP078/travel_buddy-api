@@ -51,25 +51,24 @@ class User < ApplicationRecord
 
 
   private
+    def ensure_username
+      return if self.username.present?
 
-  def ensure_username
-    return if self.username.present?
+      base = if self.name.present?
+        self.name.parameterize(separator: "_")
+      elsif self.email.present?
+        self.email.split("@").first.parameterize(separator: "_")
+      else
+        "user"
+      end
 
-    base = if self.name.present?
-      self.name.parameterize(separator: "_")
-    elsif self.email.present?
-      self.email.split("@").first.parameterize(separator: "_")
-    else
-      "user"
+      candidate = base
+
+      while self.class.exists?(username: candidate)
+        hex = SecureRandom.hex(2)
+        candidate = "#{base}_#{hex}"
+      end
+
+      self.username = candidate
     end
-
-    candidate = base
-
-    while self.class.exists?(username: candidate)
-      hex = SecureRandom.hex(2)
-      candidate = "#{base}_#{hex}"
-    end
-
-    self.username = candidate
-  end
 end

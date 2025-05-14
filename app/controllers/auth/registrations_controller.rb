@@ -27,7 +27,6 @@ class Auth::RegistrationsController < DeviseTokenAuth::RegistrationsController
   end
 
   private
-
     # Validate and populate email based on the user parameter
     def validate_and_populate_email
       login_info = params[:email]

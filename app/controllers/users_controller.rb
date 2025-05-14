@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class UsersController < ApplicationController
   before_action :authenticate_user!, only: %i[index update]
   before_action :set_user, only: :show
@@ -18,7 +20,7 @@ class UsersController < ApplicationController
   end
 
   private
-  def set_user
-    @user = User.find_by(username: params[:username])
-  end
+    def set_user
+      @user = User.find_by(username: params[:username])
+    end
 end
