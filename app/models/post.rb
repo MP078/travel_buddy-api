@@ -27,6 +27,8 @@ class Post < ApplicationRecord
   has_many :post_tags
   has_many :tags, through: :post_tags
   has_many :likes, as: :likeable, dependent: :destroy
+  has_many :comments, as: :commentable, dependent: :destroy
+
   has_many_attached :images, dependent: :destroy
 
   validates :end_date, presence: true, if: -> { start_date.present? }
@@ -42,5 +44,9 @@ class Post < ApplicationRecord
 
   def liked?(user)
     likes.exists?(user_id: user.id)
+  end
+
+  def comments_count
+    comments.count
   end
 end

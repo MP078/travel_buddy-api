@@ -12,10 +12,15 @@ Rails.application.routes.draw do
 
   # User posts routes
   resources :posts do
+    resources :comments, only: [:index, :create], module: :posts
     member do
-      post 'like'
-      delete 'unlike'
+      post "like"
+      delete "unlike"
     end
+  end
+
+  resources :comments, only: [] do
+    resources :replies, only: [:create], controller: "comments/replies"
   end
 
   # Rails health check
