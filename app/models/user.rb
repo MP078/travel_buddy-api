@@ -40,6 +40,8 @@ class User < ApplicationRecord
 
   has_one_attached :avatar, dependent: :destroy
 
+  has_many :posts, dependent: :destroy
+
 
   validates :username, presence: true, uniqueness: { case_sensitive: false }
 
