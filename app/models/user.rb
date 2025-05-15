@@ -61,7 +61,7 @@ class User < ApplicationRecord
   end
 
   def friendship_status(other_user)
-    return "none" if self == other_user
+    return "self" if self == other_user
     if self.friends.include?(other_user)
       "friends"
     elsif self.friend_requests_sent.exists?(receiver: other_user)
