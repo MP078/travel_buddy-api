@@ -12,7 +12,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_05_14_121533) do
+ActiveRecord::Schema[8.0].define(version: 2025_05_14_145533) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -56,6 +56,17 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_14_121533) do
     t.index ["commentable_type", "commentable_id"], name: "index_comments_on_commentable"
     t.index ["parent_id"], name: "index_comments_on_parent_id"
     t.index ["user_id"], name: "index_comments_on_user_id"
+  end
+
+  create_table "friendships", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "requester_id", null: false
+    t.uuid "receiver_id", null: false
+    t.string "status", default: "pending"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["receiver_id"], name: "index_friendships_on_receiver_id"
+    t.index ["requester_id", "receiver_id"], name: "index_friendships_on_requester_id_and_receiver_id", unique: true
+    t.index ["requester_id"], name: "index_friendships_on_requester_id"
   end
 
   create_table "likes", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -125,6 +136,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_14_121533) do
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "comments", "comments", column: "parent_id"
   add_foreign_key "comments", "users"
+  add_foreign_key "friendships", "users", column: "receiver_id"
+  add_foreign_key "friendships", "users", column: "requester_id"
   add_foreign_key "likes", "users"
   add_foreign_key "post_tags", "posts"
   add_foreign_key "post_tags", "tags"
