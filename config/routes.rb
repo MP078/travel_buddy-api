@@ -8,6 +8,15 @@ Rails.application.routes.draw do
 
   # User routes
   resources :users, param: :username, only: %i[index show update]
+  resources :friendships, only: [:index, :destroy], param: :username do
+    member do
+      post :accept
+      post :reject
+    end
+  end
+
+  post "/friendships/:username", to: "friendships#create", as: :send_friend_request
+
 
   # User posts routes
   resources :posts do

@@ -43,15 +43,39 @@ class User < ApplicationRecord
   has_many :posts, dependent: :destroy
   has_many :likes, dependent: :destroy # likes on posts and comments
 
+  # Friend requests sent and received
+  has_many :friend_requests_sent, class_name: "Friendship", foreign_key: :requester_id, dependent: :destroy
+  has_many :friend_requests_received, class_name: "Friendship", foreign_key: :receiver_id, dependent: :destroy
+
+  # Accepted friendships (from both sides)
+  has_many :friends_accepted_sent, -> { where(status: "accepted") }, class_name: "Friendship", foreign_key: :requester_id
+  has_many :friends_accepted_received, -> { where(status: "accepted") }, class_name: "Friendship", foreign_key: :receiver_id
+
 
   validates :username, presence: true, uniqueness: { case_sensitive: false }
 
   before_validation :ensure_username
 
+  def friends
+    (friends_accepted_sent.map(&:receiver) + friends_accepted_received.map(&:requester)).uniq
+  end
+
+  def friendship_status(other_user)
+    return "self" if self == other_user
+    if self.friends.include?(other_user)
+      "friends"
+    elsif self.friend_requests_sent.exists?(receiver: other_user)
+      "sent"
+    elsif self.friend_requests_received.exists?(requester: other_user)
+      "received"
+    else
+      "none"
+    end
+  end
+
   def avatar_url
     avatar.attached? && url_for(avatar)
   end
-
 
   private
     def ensure_username
