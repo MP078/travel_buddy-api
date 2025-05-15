@@ -60,6 +60,19 @@ class User < ApplicationRecord
     (friends_accepted_sent.map(&:receiver) + friends_accepted_received.map(&:requester)).uniq
   end
 
+  def friendship_status(other_user)
+    return "none" if self == other_user
+    if self.friends.include?(other_user)
+      "friends"
+    elsif self.friend_requests_sent.exists?(receiver: other_user)
+      "sent"
+    elsif self.friend_requests_received.exists?(requester: other_user)
+      "received"
+    else
+      "none"
+    end
+  end
+
   def avatar_url
     avatar.attached? && url_for(avatar)
   end
