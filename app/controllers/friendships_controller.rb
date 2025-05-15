@@ -2,19 +2,21 @@
 
 class FriendshipsController < ApplicationController
   before_action :authenticate_user!
+  before_action :set_friendship, only: [:accept, :reject, :destroy]
   before_action :set_target_user, only: [:create]
-  before_action :set_friendship, only: [:update, :destroy]
 
   def index
-    # Returns current user's friends (both directions)
     friends = current_user.friends_accepted_sent.map(&:receiver) +
               current_user.friends_accepted_received.map(&:requester)
     render json: friends.uniq, status: :ok
   end
 
   def create
-    if Friendship.exists?(requester: current_user, receiver: @target_user) ||
-       Friendship.exists?(requester: @target_user, receiver: current_user)
+    if @target_user == current_user
+      return render json: { error: "Cannot befriend yourself" }, status: :unprocessable_entity
+    end
+
+    if Friendship.exists_between?(current_user, @target_user)
       return render json: { error: "Friendship already exists or pending" }, status: :unprocessable_entity
     end
 
@@ -27,37 +29,46 @@ class FriendshipsController < ApplicationController
     end
   end
 
-  def update
+  def accept
     if @friendship.receiver != current_user
       return render json: { error: "Not authorized" }, status: :unauthorized
     end
 
-    if @friendship.update(status: params[:status])
-      render json: { message: "Friendship #{params[:status]}" }, status: :ok
+    if @friendship.update(status: "accepted")
+      render json: { message: "Friend request accepted." }, status: :ok
     else
       render json: { errors: @friendship.errors.full_messages }, status: :unprocessable_entity
     end
   end
 
-  def destroy
-    if @friendship.requester == current_user || @friendship.receiver == current_user
-      @friendship.destroy
-      render json: { message: "Friendship deleted" }, status: :ok
-    else
-      render json: { error: "Not authorized" }, status: :unauthorized
+  def reject
+    if @friendship.receiver != current_user
+      return render json: { error: "Not authorized" }, status: :unauthorized
     end
+
+    @friendship.destroy
+    render json: { message: "Friend request rejected." }, status: :ok
+  end
+
+  def destroy
+    unless [@friendship.receiver_id, @friendship.requester_id].include?(current_user.id)
+      return render json: { error: "Not authorized" }, status: :unauthorized
+    end
+
+    @friendship.destroy
+    render json: { message: "Friendship canceled or removed." }, status: :ok
   end
 
   private
-    def set_target_user
-      @target_user = User.find_by!(username: params[:username])
-    rescue ActiveRecord::RecordNotFound
-      render json: { error: "User not found" }, status: :not_found
-    end
-
     def set_friendship
       @friendship = Friendship.find(params[:id])
     rescue ActiveRecord::RecordNotFound
       render json: { error: "Friendship not found" }, status: :not_found
+    end
+
+    def set_target_user
+      @target_user = User.find_by!(username: params[:username])
+    rescue ActiveRecord::RecordNotFound
+      render json: { error: "User not found" }, status: :not_found
     end
 end

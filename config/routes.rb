@@ -8,8 +8,12 @@ Rails.application.routes.draw do
 
   # User routes
   resources :users, param: :username, only: %i[index show update]
-
-  resources :friendships, only: [:create, :update, :destroy, :index]
+  resources :friendships, only: [:index, :create, :destroy] do
+    member do
+      post :accept
+      post :reject
+    end
+  end
 
   # User posts routes
   resources :posts do
