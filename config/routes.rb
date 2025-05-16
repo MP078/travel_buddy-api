@@ -34,6 +34,7 @@ Rails.application.routes.draw do
     end
   end
 
+  resources :destinations
 
   # Rails health check
   get "up" => "rails/health#show", as: :rails_health_check
