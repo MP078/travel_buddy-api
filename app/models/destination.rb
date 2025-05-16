@@ -20,13 +20,14 @@
 class Destination < ApplicationRecord
   has_one_attached :image, dependent: :destroy
 
-  validates :name, :location, presence: true
-
   DIFFICULTY = {
     easy: "Easy",
     medium: "Medium",
     hard: "Hard"
   }.with_indifferent_access.freeze
+
+  validates :name, :location, presence: true
+  validates :difficulty, inclusion: { in: DIFFICULTY.keys.map(&:to_s), message: "%{value} is not a valid difficulty" }
 
 
   def cover_image_url
