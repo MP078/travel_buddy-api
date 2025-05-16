@@ -12,7 +12,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_05_16_020154) do
+ActiveRecord::Schema[8.0].define(version: 2025_05_16_032021) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -133,6 +133,19 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_16_020154) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "trip_participations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "user_id", null: false
+    t.uuid "trip_id", null: false
+    t.boolean "organizer", default: false, null: false
+    t.boolean "approved", default: false, null: false
+    t.datetime "joined_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["trip_id"], name: "index_trip_participations_on_trip_id"
+    t.index ["user_id", "trip_id"], name: "index_trip_participations_on_user_id_and_trip_id", unique: true
+    t.index ["user_id"], name: "index_trip_participations_on_user_id"
+  end
+
   create_table "trips", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "title", null: false
     t.string "location", null: false
@@ -183,4 +196,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_16_020154) do
   add_foreign_key "post_tags", "tags"
   add_foreign_key "posts", "users"
   add_foreign_key "ratings", "users"
+  add_foreign_key "trip_participations", "trips"
+  add_foreign_key "trip_participations", "users"
 end

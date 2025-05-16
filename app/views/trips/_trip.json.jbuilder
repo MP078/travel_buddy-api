@@ -1,4 +1,9 @@
 # frozen_string_literal: true
 
-json.extract! trip, :id, :created_at, :updated_at
-json.url trip_url(trip, format: :json)
+json.extract! trip, :id, :title, :location, :start_date, :end_date,
+              :maximum_participants, :activities, :description, :difficulty,
+              :created_at, :updated_at
+json.can_join trip.has_vacancy? && trip.can_user_join?
+json.members_count trip.approved_participant_count
+json.cover_image_url trip.cover_image_url
+json.participation_status trip.participation_status
