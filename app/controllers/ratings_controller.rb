@@ -33,7 +33,7 @@ class RatingsController < ApplicationController
 
   private
     def set_rateable
-      klass = params[:rateable_type].to_s.camelize.constantize
+      klass = params[:rateable_type].to_s.camelize
       @rateable = klass.find(params[:rateable_id])
     end
 
