@@ -55,8 +55,13 @@ Rails.application.routes.draw do
 
   resources :stories
 
+  resources :chat_messages, only: [:index, :create]
+
 
 
   # Rails health check
   get "up" => "rails/health#show", as: :rails_health_check
+
+  # for action cable
+  mount ActionCable.server => "/cable"
 end

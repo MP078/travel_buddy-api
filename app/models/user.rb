@@ -40,6 +40,10 @@ class User < ApplicationRecord
 
   has_one_attached :avatar, dependent: :destroy
 
+  has_many :sent_chat_messages, class_name: "ChatMessage", foreign_key: :sender_id, dependent: :destroy
+  has_many :received_chat_messages, class_name: "ChatMessage", foreign_key: :receiver_id, dependent: :destroy
+
+
   has_many :posts, dependent: :destroy
   has_many :likes, dependent: :destroy # likes on posts and comments
 
