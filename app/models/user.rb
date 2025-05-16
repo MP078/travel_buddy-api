@@ -51,6 +51,8 @@ class User < ApplicationRecord
   has_many :friends_accepted_sent, -> { where(status: "accepted") }, class_name: "Friendship", foreign_key: :requester_id
   has_many :friends_accepted_received, -> { where(status: "accepted") }, class_name: "Friendship", foreign_key: :receiver_id
 
+  has_many :ratings, dependent: :destroy
+
 
   validates :username, presence: true, uniqueness: { case_sensitive: false }
 

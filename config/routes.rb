@@ -36,6 +36,10 @@ Rails.application.routes.draw do
 
   resources :destinations
 
+
+  # User ratings routes
+  resources :ratings, only: [:create, :update]
+
   # Rails health check
   get "up" => "rails/health#show", as: :rails_health_check
 end

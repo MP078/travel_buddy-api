@@ -20,6 +20,8 @@
 class Destination < ApplicationRecord
   has_one_attached :image, dependent: :destroy
 
+  has_many :ratings, as: :rateable, dependent: :destroy
+
   DIFFICULTY = {
     easy: "Easy",
     medium: "Medium",
@@ -33,5 +35,18 @@ class Destination < ApplicationRecord
 
   def cover_image_url
     image.attached? && url_for(image)
+  end
+
+  def average_rating
+    return 0 if ratings.empty?
+    ratings.average(:value)
+  end
+
+  def rated?(user)
+    ratings.exists?(user: user)
+  end
+
+  def popularity
+    "Famous" # Placeholder for actual popularity logic
   end
 end

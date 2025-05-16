@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # This file is auto-generated from the current state of the database. Instead
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
@@ -12,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_05_15_045201) do
+ActiveRecord::Schema[8.0].define(version: 2025_05_16_011623) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -114,6 +112,19 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_15_045201) do
     t.index ["user_id"], name: "index_posts_on_user_id"
   end
 
+  create_table "ratings", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "user_id", null: false
+    t.string "rateable_type", null: false
+    t.uuid "rateable_id", null: false
+    t.integer "value", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["rateable_type", "rateable_id"], name: "index_ratings_on_rateable"
+    t.index ["user_id", "rateable_type", "rateable_id"], name: "index_ratings_on_user_and_rateable", unique: true
+    t.index ["user_id"], name: "index_ratings_on_user_id"
+    t.check_constraint "value >= 1 AND value <= 5", name: "value_between_1_and_5"
+  end
+
   create_table "tags", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "tag", null: false
     t.datetime "created_at", null: false
@@ -156,4 +167,5 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_15_045201) do
   add_foreign_key "post_tags", "posts"
   add_foreign_key "post_tags", "tags"
   add_foreign_key "posts", "users"
+  add_foreign_key "ratings", "users"
 end
