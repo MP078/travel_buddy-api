@@ -34,6 +34,25 @@ Rails.application.routes.draw do
     end
   end
 
+  resources :destinations
+
+
+  # User ratings routes
+  resources :ratings, only: [:create, :update]
+
+  resources :trips do
+    resources :trip_participations, only: [:create, :destroy] do
+      member do
+        post :promote
+        post :approve
+      end
+
+      collection do
+        delete :leave
+      end
+    end
+  end
+
 
   # Rails health check
   get "up" => "rails/health#show", as: :rails_health_check

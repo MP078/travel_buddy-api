@@ -51,6 +51,14 @@ class User < ApplicationRecord
   has_many :friends_accepted_sent, -> { where(status: "accepted") }, class_name: "Friendship", foreign_key: :requester_id
   has_many :friends_accepted_received, -> { where(status: "accepted") }, class_name: "Friendship", foreign_key: :receiver_id
 
+  has_many :ratings, dependent: :destroy
+  has_many :received_ratings, as: :rateable, class_name: "Rating", dependent: :destroy
+
+  # Trips
+  has_many :trip_participations, dependent: :destroy
+  has_many :trips, through: :trip_participations
+
+
 
   validates :username, presence: true, uniqueness: { case_sensitive: false }
 
@@ -76,6 +84,11 @@ class User < ApplicationRecord
   def avatar_url
     avatar.attached? && url_for(avatar)
   end
+
+  def joined_trips
+    trip_participations.approved.includes(:trip).map(&:trip)
+  end
+
 
   private
     def ensure_username
