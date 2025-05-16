@@ -5,6 +5,13 @@ class RatingsController < ApplicationController
   before_action :set_rateable
 
   def create
+    # [TODO] check if the user is allowed to rate this item
+
+    # prevent self-rating
+    if @rateable.is_a?(User) && @rateable.id == current_user.id
+      return render json: { error: "Really? You're rating yourself, such a joke." }, status: :forbidden
+    end
+
     @rating = @rateable.ratings.find_or_initialize_by(user: current_user)
     @rating.value = rating_params[:value]
 
