@@ -27,7 +27,8 @@ class Destination < ApplicationRecord
   }.with_indifferent_access.freeze
 
   validates :name, :location, presence: true
-  validates :difficulty, inclusion: { in: DIFFICULTY.keys.map(&:to_s), message: "%{value} is not a valid difficulty" }
+  validates :difficulty, inclusion: { in: DIFFICULTY.keys.map(&:to_s).map(&:downcase), message: "%{value} is not a valid difficulty" }, allow_nil: true
+  before_validation { self.difficulty = difficulty&.downcase }
 
 
   def cover_image_url
