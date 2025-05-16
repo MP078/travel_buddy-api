@@ -1,18 +1,28 @@
 # frozen_string_literal: true
 
-# app/controllers/trips_controller.rb
 class TripsController < ApplicationController
   before_action :authenticate_user!
 
   def create
     @trip = Trip.new(trip_params)
 
-    if @trip.save
-      render json: { success: true, trip: @trip }, status: :created
-    else
-      render json: { errors: @trip.errors.full_messages }, status: :unprocessable_entity
+    Trip.transaction do
+      if @trip.save
+        @trip.trip_participations.create!(
+          user: current_user,
+          organizer: true,
+          approved: true,
+        )
+
+        render json: { success: true, trip: @trip }, status: :created
+      else
+        render json: { errors: @trip.errors.full_messages }, status: :unprocessable_entity
+      end
+    rescue ActiveRecord::RecordInvalid => e
+      render json: { errors: [e.message] }, status: :unprocessable_entity
     end
   end
+
 
   private
     def trip_params

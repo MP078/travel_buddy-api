@@ -36,7 +36,7 @@ class TripParticipation < ApplicationRecord
   before_create :ensure_capacity_on_create
   before_update :ensure_capacity_on_approval, if: -> { approved_changed?(from: false, to: true) }
 
-
+  before_destroy :handle_organizer_departure, if: :organizer?
 
   def approve!
     update(approved: true, joined_at: Time.current)
@@ -64,5 +64,20 @@ class TripParticipation < ApplicationRecord
         errors.add(:base, "Trip is already full.")
         throw :abort
       end
+    end
+
+    def handle_organizer_departure
+      return unless only_organizer?
+
+      participants = trip.trip_participations.where.not(id: id).order(:created_at)
+
+      if participants.exists?
+        participants.first.update(organizer: true)
+      else
+        trip.destroy
+      end
+    end
+    def only_organizer?
+      trip.trip_participations.where(organizer: true).where.not(id: id).none?
     end
 end
