@@ -4,7 +4,9 @@ class TripsController < ApplicationController
   before_action :authenticate_user!
 
   def index
-    if params[:username].present?
+    if params[:upcoming].present? && params[:upcoming].to_s == "true"
+      @trips = Trip.where("start_date >= ?", Date.today).order(start_date: :asc)
+    elsif params[:username].present?
       @user = User.find_by(username: params[:username])
       @trips = @user.trips.includes(:trip_participations, :users).order(created_at: :desc)
     elsif params[:location].present?
@@ -17,7 +19,6 @@ class TripsController < ApplicationController
       @trips = Trip.where("start_date >= ?", params[:start_date])
     elsif params[:end_date].present?
       @trips = Trip.where("end_date <= ?", params[:end_date])
-
     else
       @trips = Trip.all
     end
@@ -55,6 +56,7 @@ class TripsController < ApplicationController
         :description,
         :difficulty,
         :cover_image,
+        :cost,
         activities: [],
         highlights: [],
         images: []
