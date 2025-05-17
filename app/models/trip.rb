@@ -6,9 +6,11 @@
 #
 #  id                   :uuid             not null, primary key
 #  activities           :string           default([]), is an Array
+#  cost                 :string           default("Rs. 0")
 #  description          :string
 #  difficulty           :string           default("easy"), not null
 #  end_date             :date             not null
+#  highlights           :string           default([]), is an Array
 #  location             :string           not null
 #  maximum_participants :integer          default(1)
 #  start_date           :date             not null
@@ -20,6 +22,8 @@ class Trip < ApplicationRecord
   has_many :trip_participations, dependent: :destroy
   has_many :users, through: :trip_participations
   has_many :participants, through: :trip_participations, source: :user
+
+  has_many_attached :images, dependent: :destroy
 
   has_one_attached :cover_image, dependent: :destroy
 
@@ -108,5 +112,10 @@ class Trip < ApplicationRecord
 
   def cover_image_url
     cover_image.attached? && url_for(cover_image)
+  end
+
+  def image_urls
+    return [] unless images.attached?
+    images.map { |image| url_for(image) }
   end
 end

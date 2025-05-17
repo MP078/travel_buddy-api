@@ -56,6 +56,8 @@ class TripsController < ApplicationController
         :difficulty,
         :cover_image,
         activities: [],
+        highlights: [],
+        images: []
       )
     end
 end
