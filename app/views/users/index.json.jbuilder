@@ -1,4 +1,9 @@
 # frozen_string_literal: true
 
-json.message "User not found" if @user.nil?
-json.data @user, partial: "users/user", as: :user
+if @user
+  json.data @user, partial: "users/user", as: :user
+elsif @users
+  json.data @users, partial: "users/user", as: :user
+else
+  json.message "User not found"
+end
