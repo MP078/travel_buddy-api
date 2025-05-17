@@ -5,7 +5,7 @@ class UsersController < ApplicationController
   before_action :set_user, only: :show
 
   def index
-    if params[:all]==true
+    if params[:all]=="true"
       @users = User.where.not(id: [current_user.id] + current_user.friends.pluck(:id))
       return
     end
