@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-json.extract! user, :id, :username, :email, :name, :verified, :certifications, :location, :website, :languages, :interests
+json.extract! user, :id, :username, :email, :name, :verified, :certifications, :location, :website, :languages, :interests, :bio, :about
 json.friendship_status current_user.friendship_status(user) if current_user
 json.total_trips user.trips.count
 json.travel_days user.travel_days
