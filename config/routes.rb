@@ -7,7 +7,10 @@ Rails.application.routes.draw do
   }
 
   # User routes
-  resources :users, only: %i[index show]
+  get "/users/photos", to: "users#photos", as: :user_photos
+  get "/users", to: "users#index", as: :users
+  get "/users/:username", to: "users#show", as: :user
+
 
   patch "/users", to: "users#update", as: :update_current_user
 

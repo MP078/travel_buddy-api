@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class UsersController < ApplicationController
-  before_action :authenticate_user!, only: %i[index update]
+  before_action :authenticate_user!, only: %i[index update photos]
   before_action :set_user, only: :show
 
   def index
@@ -28,6 +28,26 @@ class UsersController < ApplicationController
       render json: current_user.errors, status: :unprocessable_entity
     end
   end
+
+  def photos
+    user = if params[:username].present?
+      User.find_by(username: params[:username])
+    else
+      current_user
+    end
+
+    if user.nil?
+      render json: { error: "User not found" }, status: :not_found
+      return
+    end
+
+    photos = user.posts.includes(images_attachments: :blob).flat_map do |post|
+      post.images.map { |image| url_for(image) }
+    end
+
+    render json: { message: "User photos retrieved successfully", data: photos }
+  end
+
 
   private
     def set_user
