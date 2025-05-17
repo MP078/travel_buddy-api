@@ -5,6 +5,10 @@ class UsersController < ApplicationController
   before_action :set_user, only: :show
 
   def index
+    if params[:all]==true
+      @user = User.where.not(id: [current_user.id] + current_user.friends.pluck(:id))
+      return
+    end
     @user = current_user
     if @user.nil?
       render json: { error: "User not found" }, status: :not_found
