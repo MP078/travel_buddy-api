@@ -18,6 +18,7 @@
 #
 class Trip < ApplicationRecord
   has_many :trip_participations, dependent: :destroy
+  has_many :users, through: :trip_participations
   has_many :participants, through: :trip_participations, source: :user
 
   has_one_attached :cover_image, dependent: :destroy

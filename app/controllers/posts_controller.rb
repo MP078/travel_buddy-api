@@ -14,7 +14,7 @@ class PostsController < ApplicationController
       @tag = Tag.find_by(tag: params[:tag])
       @posts = @tag.posts.includes(:user, :tags, :comments).order(created_at: :desc)
     else
-    @posts = Post.all.includes(:user, :tags, :comments).order(created_at: :desc)
+      @posts = Post.all.includes(:user, :tags, :comments).order(created_at: :desc)
     end
   end
 

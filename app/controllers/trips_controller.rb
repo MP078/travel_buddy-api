@@ -6,7 +6,7 @@ class TripsController < ApplicationController
   def index
     if params[:username].present?
       @user = User.find_by(username: params[:username])
-      @trips = @user.trips.includes(:trip_participations, :user).order(created_at: :desc)
+      @trips = @user.trips.includes(:trip_participations, :users).order(created_at: :desc)
     elsif params[:location].present?
       @trips = Trip.where(location: params[:location])
     elsif params[:activity].present?
