@@ -8,6 +8,14 @@ class FriendshipsController < ApplicationController
     @friends = current_user.friends
   end
 
+  def received_requests
+    @received_requests = current_user.friend_requests_received.includes(:requester)
+  end
+
+  def sent_requests
+    @sent_requests = current_user.friend_requests_sent.includes(:receiver)
+  end
+
   def create
     existing = Friendship.between(current_user, @receiver).first
 

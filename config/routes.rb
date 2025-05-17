@@ -19,6 +19,10 @@ Rails.application.routes.draw do
       post :accept
       post :reject
     end
+    collection do
+      get :received_requests
+      get :sent_requests
+    end
   end
 
   post "/friendships/:username", to: "friendships#create", as: :send_friend_request
