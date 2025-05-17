@@ -93,6 +93,16 @@ class User < ApplicationRecord
     trip_participations.approved.includes(:trip).map(&:trip)
   end
 
+  def travel_days
+    trips.sum do |trip|
+      if trip.start_date && trip.end_date
+        (trip.end_date - trip.start_date).to_i + 1
+      else
+        0
+      end
+    end
+  end
+
 
   private
     def ensure_username
