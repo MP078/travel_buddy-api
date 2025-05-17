@@ -56,8 +56,8 @@ class User < ApplicationRecord
   has_many :likes, dependent: :destroy # likes on posts and comments
 
   # Friend requests sent and received
-  has_many :friend_requests_sent, class_name: "Friendship", foreign_key: :requester_id, dependent: :destroy
-  has_many :friend_requests_received, class_name: "Friendship", foreign_key: :receiver_id, dependent: :destroy
+  has_many :friend_requests_sent, -> { where(status: "pending") }, class_name: "Friendship", foreign_key: :requester_id, dependent: :destroy
+  has_many :friend_requests_received, -> { where(status: "pending") },  class_name: "Friendship", foreign_key: :receiver_id, dependent: :destroy
 
   # Accepted friendships (from both sides)
   has_many :friends_accepted_sent, -> { where(status: "accepted") }, class_name: "Friendship", foreign_key: :requester_id

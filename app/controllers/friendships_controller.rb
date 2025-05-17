@@ -31,6 +31,7 @@ class FriendshipsController < ApplicationController
   def accept
     friendship = Friendship.find_by(requester: @receiver, receiver: current_user, status: :pending)
 
+    pry
     if friendship
       friendship.update!(status: :accepted)
       render json: friendship, status: :ok
