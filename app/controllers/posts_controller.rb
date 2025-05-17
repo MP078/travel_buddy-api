@@ -7,14 +7,16 @@ class PostsController < ApplicationController
   # GET /posts
   # GET /posts.json
   def index
-    if params[:username].present?
+    if params[:all] == "true"
+      @posts = Post.all.includes(:user, :tags, :comments).order(created_at: :desc)
+    elsif params[:username].present?
       @user = User.find_by(username: params[:username])
       @posts = @user.posts.includes(:user, :tags, :comments).order(created_at: :desc)
     elsif params[:tag].present?
       @tag = Tag.find_by(tag: params[:tag])
       @posts = @tag.posts.includes(:user, :tags, :comments).order(created_at: :desc)
     else
-      @posts = Post.all.includes(:user, :tags, :comments).order(created_at: :desc)
+      @posts = current_user.posts.includes(:user, :tags, :comments).order(created_at: :desc)
     end
   end
 
