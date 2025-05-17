@@ -17,6 +17,9 @@ class TripsController < ApplicationController
       @trips = Trip.where("start_date >= ?", params[:start_date])
     elsif params[:end_date].present?
       @trips = Trip.where("end_date <= ?", params[:end_date])
+
+    else
+      @trips = Trip.all
     end
   end
 
