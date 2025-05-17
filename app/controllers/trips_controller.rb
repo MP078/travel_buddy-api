@@ -54,7 +54,8 @@ class TripsController < ApplicationController
         :maximum_participants,
         :description,
         :difficulty,
-        activities: []
+        :cover_image,
+        activities: [],
       )
     end
 end
