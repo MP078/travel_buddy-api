@@ -6,12 +6,17 @@
 #
 #  id                     :uuid             not null, primary key
 #  allow_password_change  :boolean          default(FALSE)
+#  certifications         :string           default([]), is an Array
 #  confirmation_sent_at   :datetime
 #  confirmation_token     :string
 #  confirmed_at           :datetime
 #  email                  :string
 #  encrypted_password     :string           default(""), not null
+#  interests              :string           default([]), is an Array
+#  languages              :string           default([]), is an Array
+#  location               :string
 #  name                   :string
+#  phone                  :string
 #  provider               :string           default("email"), not null
 #  remember_created_at    :datetime
 #  reset_password_sent_at :datetime
@@ -21,6 +26,7 @@
 #  unconfirmed_email      :string
 #  username               :string           not null
 #  verified               :boolean          default(FALSE)
+#  website                :string
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
 #
