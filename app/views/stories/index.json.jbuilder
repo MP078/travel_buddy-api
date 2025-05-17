@@ -7,5 +7,6 @@ json.data @users_with_stories do |user|
     json.name user.name
     json.avatar_url user.avatar_url
   end
-  json.stories user.stories.active, partial: "stories/story", as: :story
+
+  json.stories user.active_stories, partial: "stories/story", as: :story
 end
