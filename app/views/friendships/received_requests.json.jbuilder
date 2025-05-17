@@ -3,10 +3,10 @@
 json.message "Fetched received friend requests"
 
 json.data @received_requests do |request|
-  json.id request.requester.id
+  json.extract! request, :id, :status, :created_at, :updated_at
+  json.sender_id request.requester.id
   json.username request.requester.username
   json.avatar_url request.requester.avatar_url
   json.name request.requester.name
-  json.created_at request.created_at
-  json.status request.status
+  json.location request.requester.location
 end
