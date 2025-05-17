@@ -7,7 +7,10 @@ Rails.application.routes.draw do
   }
 
   # User routes
-  resources :users, param: :username, only: %i[index show update]
+  resources :users, only: %i[index show]
+
+  patch "/users", to: "users#update", as: :update_current_user
+
   resources :friendships, only: [:index, :destroy], param: :username do
     member do
       post :accept

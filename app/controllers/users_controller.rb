@@ -22,9 +22,6 @@ class UsersController < ApplicationController
   end
 
   def update
-    if user_params[:username] && User.find_by(username: user_params[:username])
-      return render json: { error: "Username not available" }, status: :unprocessable_entity
-    end
     if current_user.update!(user_params)
       render :show, status: :ok, location: @user = current_user
     else

@@ -3,6 +3,23 @@
 class TripsController < ApplicationController
   before_action :authenticate_user!
 
+  def index
+    if params[:username].present?
+      @user = User.find_by(username: params[:username])
+      @trips = @user.trips.includes(:trip_participations, :user).order(created_at: :desc)
+    elsif params[:location].present?
+      @trips = Trip.where(location: params[:location])
+    elsif params[:activity].present?
+      @trips = Trip.where("activities @> ?", "{#{params[:activity]}}")
+    elsif params[:difficulty].present?
+      @trips = Trip.where(difficulty: params[:difficulty])
+    elsif params[:start_date].present?
+      @trips = Trip.where("start_date >= ?", params[:start_date])
+    elsif params[:end_date].present?
+      @trips = Trip.where("end_date <= ?", params[:end_date])
+    end
+  end
+
   def create
     @trip = Trip.new(trip_params)
 

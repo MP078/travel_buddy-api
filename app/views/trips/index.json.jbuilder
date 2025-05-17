@@ -1,3 +1,4 @@
 # frozen_string_literal: true
 
-json.array! @trips, partial: "trips/trip", as: :trip
+json.message "Trips loaded successfully"
+json.data @trips, partial: "trips/trip", as: :trip
