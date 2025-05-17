@@ -6,3 +6,4 @@ json.total_trips user.trips.count
 json.travel_days user.travel_days
 json.connections user.friends.count
 json.profile_image user.avatar_url
+json.member_since user.created_at.strftime("Member since %B %Y")

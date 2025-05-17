@@ -204,6 +204,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_17_062331) do
     t.string "languages", default: [], array: true
     t.string "interests", default: [], array: true
     t.string "certifications", default: [], array: true
+    t.string "bio"
+    t.text "about"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true

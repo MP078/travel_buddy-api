@@ -5,7 +5,9 @@
 # Table name: users
 #
 #  id                     :uuid             not null, primary key
+#  about                  :text
 #  allow_password_change  :boolean          default(FALSE)
+#  bio                    :string
 #  certifications         :string           default([]), is an Array
 #  confirmation_sent_at   :datetime
 #  confirmation_token     :string

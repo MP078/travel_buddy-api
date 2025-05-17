@@ -8,5 +8,7 @@ class AddAttributesToUser < ActiveRecord::Migration[8.0]
     add_column :users, :languages, :string, array: true, default: []
     add_column :users, :interests, :string, array: true, default: []
     add_column :users, :certifications, :string, array: true, default: []
+    add_column :users, :bio, :string
+    add_column :users, :about, :text
   end
 end
