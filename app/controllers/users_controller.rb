@@ -11,6 +11,7 @@ class UsersController < ApplicationController
     elsif params[:suggested]=="true"
       @users = User.similar_to(current_user)
       @users = @users.where.not(id: [current_user.id] + current_user.friends.pluck(:id))
+      return
     end
     @user = current_user
     if @user.nil?

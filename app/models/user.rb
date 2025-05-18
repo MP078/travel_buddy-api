@@ -80,13 +80,22 @@ class User < ApplicationRecord
   before_validation :ensure_username
 
   scope :similar_to, ->(user) {
+    interests_array = user.interests || []
+    languages_array = user.languages || []
+    about_query = user.about.to_s.split(/\W+/).reject(&:blank?).join(' | ')
+    location_query = user.location.to_s
+
     where.not(id: user.id)
       .where(
-        "similarity(about, ?) > 0.2 OR location = ? OR (interests && ARRAY[?]::varchar[])",
-        user.about, user.location, user.interests
-      )
-      .order(
-        Arel.sql("GREATEST(similarity(about, '#{user.about}'), (CASE WHEN location = '#{user.location}' THEN 1 ELSE 0 END), cardinality(array_cat(interests, ARRAY#{user.interests.inspect}::varchar[]))) DESC")
+        "
+          (interests && ARRAY[?]::varchar[])
+          OR (languages && ARRAY[?]::varchar[])
+          OR similarity(about, ?) > 0.2
+          OR to_tsvector('english', about) @@ plainto_tsquery('english', ?)
+          OR location = ?
+          OR to_tsvector('english', location) @@ plainto_tsquery('english', ?)
+        ",
+        interests_array, languages_array, user.about, about_query, user.location, location_query
       )
   }
 
