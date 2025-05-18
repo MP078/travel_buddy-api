@@ -2,28 +2,38 @@
 
 class ChatChannel < ApplicationCable::Channel
   def subscribed
-    chat_id = [params[:sender_id], params[:receiver_id]].sort.join("_")
-    stream_from "chat_#{chat_id}"
+    conversation = Conversation.find(params[:conversation_id])
+    stream_for conversation
+  end
+
+  def unsubscribed
+    # Any cleanup needed when channel is unsubscribed
   end
 
   def receive(data)
-    sender = User.find(data["sender_id"])
-    receiver = User.find(data["receiver_id"])
-    message = Message.create!(
-      sender: sender,
-      receiver: receiver,
-      body: data["body"],
-      read: false
+    conversation = Conversation.find(params[:conversation_id])
+    conversation.messages.create!(
+      content: data["content"],
+      user: current_user
     )
 
-    chat_id = [sender.id, receiver.id].sort.join("_")
+    # Message is broadcasted via after_create_commit callback
+  end
 
-    ActionCable.server.broadcast("chat_#{chat_id}", {
-      id: message.id,
-      body: message.body,
-      sender_id: sender.id,
-      receiver_id: receiver.id,
-      created_at: message.created_at.strftime("%H:%M"),
-    })
+  def mark_as_read(data)
+    conversation = Conversation.find(params[:conversation_id])
+    messages = conversation.messages
+               .where(read: false)
+               .where.not(user_id: current_user.id)
+
+    messages.update_all(read: true)
+
+    ChatChannel.broadcast_to(
+      conversation,
+      {
+        action: "messages_read",
+        reader_id: current_user.id
+      }
+    )
   end
 end

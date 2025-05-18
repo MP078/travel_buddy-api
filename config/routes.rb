@@ -67,6 +67,9 @@ Rails.application.routes.draw do
 
   resources :chat_messages, only: [:index, :create]
 
+  resources :conversations, only: [:index, :show, :create] do
+    resources :messages, only: [:create]
+  end
 
 
   # Rails health check

@@ -10,9 +10,11 @@ module ApplicationCable
 
     private
       def find_verified_user
-        # env['warden'] is available because Devise uses Warden under the hood
-        if (verified_user = env["warden"].user)
-          verified_user
+        # For cookie-based authentication
+        if cookies.encrypted[:user_id]
+          User.find_by(id: cookies.encrypted[:user_id])
+        elsif env["warden"] && env["warden"].user
+          env["warden"].user
         else
           reject_unauthorized_connection
         end
