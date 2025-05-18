@@ -1,5 +1,7 @@
-require 'faker'
-require_relative '../../lib/image_downloader'
+# frozen_string_literal: true
+
+require "faker"
+require_relative "../../lib/image_downloader"
 
 users = User.all.to_a
 
@@ -11,7 +13,7 @@ users.each_with_index do |user, i|
       caption: Faker::Lorem.sentence(word_count: 6),
       location: Faker::Address.city
     )
-    image_url = Faker::LoremFlickr.image(size: "400x700", search_terms: ['travel', 'adventure']).gsub('https://', 'http://')
+    image_url = Faker::LoremFlickr.image(size: "400x700", search_terms: ["travel", "adventure"]).gsub("https://", "http://")
     ImageDownloader.attach_image_from_url(story, image_url, :image)
     story.save! # Now validation will pass
     puts "Created story #{j + 1} for user #{user.name}"

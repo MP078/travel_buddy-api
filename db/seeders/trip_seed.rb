@@ -1,5 +1,7 @@
-require 'faker'
-require_relative '../../lib/image_downloader'
+# frozen_string_literal: true
+
+require "faker"
+require_relative "../../lib/image_downloader"
 
 difficulties = %w[easy medium hard]
 
@@ -23,13 +25,13 @@ puts "Seeding trips and trip participations..."
     cost: "Rs. #{rand(500..5000)}",
     maximum_participants: rand(3..10),
     activities: Array.new(rand(2..5)) { Faker::Hobby.activity },
-    highlights: Array.new(rand(2..4)) { Faker::Lorem.words(number: 2).join(' ') }
+    highlights: Array.new(rand(2..4)) { Faker::Lorem.words(number: 2).join(" ") }
   )
 
-  cover_url = Faker::LoremFlickr.image(size: "600x400", search_terms: ['adventure', 'travel']).gsub('https://', 'http://')
+  cover_url = Faker::LoremFlickr.image(size: "600x400", search_terms: ["adventure", "travel"]).gsub("https://", "http://")
   ImageDownloader.attach_image_from_url(trip, cover_url, :cover_image)
   2.times do
-    img_url = Faker::LoremFlickr.image(size: "400x300", search_terms: ['nature', 'trip']).gsub('https://', 'http://')
+    img_url = Faker::LoremFlickr.image(size: "400x300", search_terms: ["nature", "trip"]).gsub("https://", "http://")
     ImageDownloader.attach_image_from_url(trip, img_url, :images)
   end
 

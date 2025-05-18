@@ -1,5 +1,7 @@
-require 'faker'
-require_relative '../../lib/image_downloader'
+# frozen_string_literal: true
+
+require "faker"
+require_relative "../../lib/image_downloader"
 
 users = User.all.to_a
 destinations = Destination.all.to_a
@@ -21,7 +23,7 @@ puts "Seeding posts, likes, and comments..."
   )
 
   rand(1..3).times do
-    img_url = Faker::LoremFlickr.image(size: "400x300", search_terms: ['travel', 'adventure']).gsub('https://', 'http://')
+    img_url = Faker::LoremFlickr.image(size: "400x300", search_terms: ["travel", "adventure"]).gsub("https://", "http://")
     ImageDownloader.attach_image_from_url(post, img_url, :images)
   end
 

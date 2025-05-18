@@ -1,6 +1,8 @@
-require 'open-uri'
-require 'tempfile'
-require 'openssl'
+# frozen_string_literal: true
+
+require "open-uri"
+require "tempfile"
+require "openssl"
 
 module ImageDownloader
   # Downloads an image from a URL and attaches it to a record's ActiveStorage association

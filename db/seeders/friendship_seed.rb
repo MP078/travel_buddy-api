@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 users = User.all.to_a
 
 puts "Seeding friendships..."
