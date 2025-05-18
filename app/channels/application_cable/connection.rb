@@ -10,10 +10,8 @@ module ApplicationCable
 
     private
       def find_verified_user
-        # For cookie-based authentication
-        if cookies.encrypted[:user_id]
-          User.find_by(id: cookies.encrypted[:user_id])
-        elsif env["warden"] && env["warden"].user
+        # Devise/Warden session-based authentication
+        if env["warden"].user
           env["warden"].user
         else
           reject_unauthorized_connection

@@ -17,7 +17,8 @@ class ConversationsController < ApplicationController
         other_user: {
           id: other_user.id,
           name: other_user.name,
-          username: other_user.username
+          username: other_user.username,
+          avatar_url: other_user.avatar_url
         },
         last_message: last_message ? {
           id: last_message.id,
@@ -65,9 +66,10 @@ class ConversationsController < ApplicationController
       )
     end
 
+    other_user = @conversation.with_user(current_user)
     render json: {
       id: @conversation.id,
-      other_user: @conversation.with_user(current_user).as_json(only: [:id, :name, :username]),
+      other_user: other_user.as_json(only: [:id, :name, :username]).merge(avatar_url: other_user.avatar_url),
       messages: []
     }, status: :created
   end

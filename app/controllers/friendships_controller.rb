@@ -33,6 +33,9 @@ class FriendshipsController < ApplicationController
 
     if friendship
       friendship.update!(status: :accepted)
+      # create a conversation for the new friendship
+      Conversation.create!(sender: current_user, recipient: @receiver)
+      # create a message to notify the other user
       render json: friendship, status: :ok
     else
       render json: { error: "No pending request from user" }, status: :not_found

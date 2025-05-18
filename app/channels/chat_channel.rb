@@ -3,6 +3,7 @@
 class ChatChannel < ApplicationCable::Channel
   def subscribed
     conversation = Conversation.find(params[:conversation_id])
+    Rails.logger.info "User #{current_user.id} subscribed to conversation #{conversation.id}"
     stream_for conversation
   end
 
@@ -16,7 +17,7 @@ class ChatChannel < ApplicationCable::Channel
       content: data["content"],
       user: current_user
     )
-
+    Rails.logger.info "ChatChannel#receive called with: #{data.inspect} by user #{current_user&.id}"
     # Message is broadcasted via after_create_commit callback
   end
 

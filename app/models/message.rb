@@ -23,12 +23,11 @@
 #  fk_rails_...  (user_id => users.id)
 #
 class Message < ApplicationRecord
+  after_create_commit :broadcast_message
   belongs_to :conversation
   belongs_to :user
 
   validates :content, presence: true
-
-  after_create_commit :broadcast_message
 
   private
     def broadcast_message
