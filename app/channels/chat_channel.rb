@@ -2,10 +2,14 @@
 
 class ChatChannel < ApplicationCable::Channel
   def subscribed
-    conversation = Conversation.find(params[:conversation_id])
-    Rails.logger.info "User #{current_user.id} subscribed to conversation #{conversation.id}"
-    stream_for conversation
+    @conversation = Conversation.find(params[:conversation_id])
+    unless [@conversation.sender_id, @conversation.recipient_id].include?(current_user.id)
+      reject
+    else
+      stream_for @conversation
+    end
   end
+
 
   def unsubscribed
     # Any cleanup needed when channel is unsubscribed
@@ -13,12 +17,19 @@ class ChatChannel < ApplicationCable::Channel
 
   def receive(data)
     conversation = Conversation.find(params[:conversation_id])
-    conversation.messages.create!(
+    message = conversation.messages.create!(
       content: data["content"],
       user: current_user
     )
-    Rails.logger.info "ChatChannel#receive called with: #{data.inspect} by user #{current_user&.id}"
-    # Message is broadcasted via after_create_commit callback
+
+    # Broadcast the message immediately without waiting for the job
+    message_json = message.as_json(only: [:id, :content, :user_id, :read, :created_at])
+    ChatChannel.broadcast_to(
+      conversation,
+      message_json
+    )
+
+    Rails.logger.info "ChatChannel#receive: Created and broadcast message #{message.id} in conversation #{conversation.id} by user #{current_user&.id}"
   end
 
   def mark_as_read(data)
