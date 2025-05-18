@@ -5,13 +5,20 @@
 # Table name: users
 #
 #  id                     :uuid             not null, primary key
+#  about                  :text
 #  allow_password_change  :boolean          default(FALSE)
+#  bio                    :string
+#  certifications         :string           default([]), is an Array
 #  confirmation_sent_at   :datetime
 #  confirmation_token     :string
 #  confirmed_at           :datetime
 #  email                  :string
 #  encrypted_password     :string           default(""), not null
+#  interests              :string           default([]), is an Array
+#  languages              :string           default([]), is an Array
+#  location               :string
 #  name                   :string
+#  phone                  :string
 #  provider               :string           default("email"), not null
 #  remember_created_at    :datetime
 #  reset_password_sent_at :datetime
@@ -21,6 +28,7 @@
 #  unconfirmed_email      :string
 #  username               :string           not null
 #  verified               :boolean          default(FALSE)
+#  website                :string
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
 #
@@ -40,12 +48,16 @@ class User < ApplicationRecord
 
   has_one_attached :avatar, dependent: :destroy
 
+  has_many :sent_chat_messages, class_name: "ChatMessage", foreign_key: :sender_id, dependent: :destroy
+  has_many :received_chat_messages, class_name: "ChatMessage", foreign_key: :receiver_id, dependent: :destroy
+
+
   has_many :posts, dependent: :destroy
   has_many :likes, dependent: :destroy # likes on posts and comments
 
   # Friend requests sent and received
-  has_many :friend_requests_sent, class_name: "Friendship", foreign_key: :requester_id, dependent: :destroy
-  has_many :friend_requests_received, class_name: "Friendship", foreign_key: :receiver_id, dependent: :destroy
+  has_many :friend_requests_sent, -> { where(status: "pending") }, class_name: "Friendship", foreign_key: :requester_id, dependent: :destroy
+  has_many :friend_requests_received, -> { where(status: "pending") },  class_name: "Friendship", foreign_key: :receiver_id, dependent: :destroy
 
   # Accepted friendships (from both sides)
   has_many :friends_accepted_sent, -> { where(status: "accepted") }, class_name: "Friendship", foreign_key: :requester_id
@@ -57,6 +69,9 @@ class User < ApplicationRecord
   # Trips
   has_many :trip_participations, dependent: :destroy
   has_many :trips, through: :trip_participations
+
+  # Stories
+  has_many :stories, dependent: :destroy
 
 
 
@@ -87,6 +102,16 @@ class User < ApplicationRecord
 
   def joined_trips
     trip_participations.approved.includes(:trip).map(&:trip)
+  end
+
+  def travel_days
+    trips.sum do |trip|
+      if trip.start_date && trip.end_date
+        (trip.end_date - trip.start_date).to_i + 1
+      else
+        0
+      end
+    end
   end
 
 

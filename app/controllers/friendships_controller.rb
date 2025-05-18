@@ -8,6 +8,14 @@ class FriendshipsController < ApplicationController
     @friends = current_user.friends
   end
 
+  def received_requests
+    @received_requests = current_user.friend_requests_received.includes(:requester)
+  end
+
+  def sent_requests
+    @sent_requests = current_user.friend_requests_sent.includes(:receiver)
+  end
+
   def create
     existing = Friendship.between(current_user, @receiver).first
 
@@ -25,6 +33,9 @@ class FriendshipsController < ApplicationController
 
     if friendship
       friendship.update!(status: :accepted)
+      # create a conversation for the new friendship
+      Conversation.create!(sender: current_user, recipient: @receiver)
+      # create a message to notify the other user
       render json: friendship, status: :ok
     else
       render json: { error: "No pending request from user" }, status: :not_found

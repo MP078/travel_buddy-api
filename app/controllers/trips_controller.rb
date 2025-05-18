@@ -11,6 +11,27 @@ class TripsController < ApplicationController
     @trip_participants = @trip.trip_participations.includes(:user).where(approved: false)
   end
 
+  def index
+    if params[:upcoming].present? && params[:upcoming].to_s == "true"
+      @trips = Trip.where("start_date >= ?", Date.today).order(start_date: :asc)
+    elsif params[:username].present?
+      @user = User.find_by(username: params[:username])
+      @trips = @user.trips.includes(:trip_participations, :users).order(created_at: :desc)
+    elsif params[:location].present?
+      @trips = Trip.where(location: params[:location])
+    elsif params[:activity].present?
+      @trips = Trip.where("activities @> ?", "{#{params[:activity]}}")
+    elsif params[:difficulty].present?
+      @trips = Trip.where(difficulty: params[:difficulty])
+    elsif params[:start_date].present?
+      @trips = Trip.where("start_date >= ?", params[:start_date])
+    elsif params[:end_date].present?
+      @trips = Trip.where("end_date <= ?", params[:end_date])
+    else
+      @trips = Trip.all
+    end
+  end
+
   def create
     @trip = Trip.new(trip_params)
 
@@ -42,7 +63,11 @@ class TripsController < ApplicationController
         :maximum_participants,
         :description,
         :difficulty,
-        activities: []
+        :cover_image,
+        :cost,
+        activities: [],
+        highlights: [],
+        images: []
       )
     end
 

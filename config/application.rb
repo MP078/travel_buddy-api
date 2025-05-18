@@ -25,6 +25,9 @@ module TravelbuddyApi
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 8.0
 
+    config.active_job.queue_adapter = :solid_queue
+    config.solid_queue.connects_to = { database: { writing: :queue } }
+    config.active_storage.queue = :low_priority
 
 
 

@@ -7,11 +7,21 @@ Rails.application.routes.draw do
   }
 
   # User routes
-  resources :users, param: :username, only: %i[index show update]
+  get "/users/photos", to: "users#photos", as: :user_photos
+  get "/users", to: "users#index", as: :users
+  get "/users/:username", to: "users#show", as: :user
+
+
+  patch "/users", to: "users#update", as: :update_current_user
+
   resources :friendships, only: [:index, :destroy], param: :username do
     member do
       post :accept
       post :reject
+    end
+    collection do
+      get :received_requests
+      get :sent_requests
     end
   end
 
@@ -54,10 +64,18 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :stories
+  resources :stories, param: :username
 
+  resources :chat_messages, only: [:index, :create]
+
+  resources :conversations, only: [:index, :show, :create] do
+    resources :messages, only: [:create]
+  end
 
 
   # Rails health check
   get "up" => "rails/health#show", as: :rails_health_check
+
+  # for action cable
+  mount ActionCable.server => "/cable"
 end
