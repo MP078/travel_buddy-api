@@ -63,7 +63,7 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :stories
+  resources :stories, param: :username
 
   resources :chat_messages, only: [:index, :create]
 
