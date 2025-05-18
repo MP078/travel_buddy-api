@@ -12,7 +12,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_05_18_012334) do
+ActiveRecord::Schema[8.0].define(version: 2025_05_18_100205) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -80,6 +80,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_18_012334) do
     t.string "average_cost"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.jsonb "travel_guide", default: {}
   end
 
   create_table "friendships", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -189,6 +190,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_18_012334) do
     t.datetime "updated_at", null: false
     t.string "cost", default: "Rs. 0"
     t.string "highlights", default: [], array: true
+    t.jsonb "travel_guide", default: {}
   end
 
   create_table "users", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|

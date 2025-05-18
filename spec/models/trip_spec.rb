@@ -15,6 +15,7 @@
 #  maximum_participants :integer          default(1)
 #  start_date           :date             not null
 #  title                :string           not null
+#  travel_guide         :jsonb
 #  created_at           :datetime         not null
 #  updated_at           :datetime         not null
 #

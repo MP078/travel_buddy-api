@@ -13,6 +13,7 @@
 #  highlights         :string           default([]), is an Array
 #  location           :string           not null
 #  name               :string           not null
+#  travel_guide       :jsonb
 #  travel_tips        :string           default([]), is an Array
 #  created_at         :datetime         not null
 #  updated_at         :datetime         not null
