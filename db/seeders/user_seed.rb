@@ -4,7 +4,7 @@ require "faker"
 require_relative "../../lib/image_downloader"
 
 puts "Seeding users..."
-50.times do |i|
+20.times do |i|
   user = User.create!(
     name: Faker::Name.name,
     email: Faker::Internet.unique.email,

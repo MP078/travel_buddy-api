@@ -8,6 +8,10 @@ class TripsController < ApplicationController
 
 
   def list_pending_participants
+    unless @trip.trip_participations.find_by(user: current_user, organizer: true)
+      render json: { error: "Only the organizer can view pending participants." }, status: :forbidden and return
+    end
+
     @trip_participants = @trip.trip_participations.includes(:user).where(approved: false)
   end
 
