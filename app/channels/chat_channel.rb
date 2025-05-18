@@ -6,6 +6,7 @@ class ChatChannel < ApplicationCable::Channel
     unless [@conversation.sender_id, @conversation.recipient_id].include?(current_user.id)
       reject
     else
+      Rails.logger.info "ChatChannel#subscribed: User #{current_user.id} subscribed to conversation #{@conversation.id}"
       stream_for @conversation
     end
   end

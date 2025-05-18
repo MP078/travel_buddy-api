@@ -9,6 +9,7 @@ class MessagesController < ApplicationController
     @message.user = current_user
 
     if @message.save
+      ChatChannel.broadcast_to(@message.conversation, @message)
       render json: @message.as_json(only: [:id, :content, :user_id, :read, :created_at]), status: :created
     else
       render json: { errors: @message.errors.full_messages }, status: :unprocessable_entity
