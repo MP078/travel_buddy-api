@@ -22,12 +22,21 @@
 #  fk_rails_...  (conversation_id => conversations.id)
 #  fk_rails_...  (user_id => users.id)
 #
+
 class Message < ApplicationRecord
   after_create_commit :broadcast_message
   belongs_to :conversation
   belongs_to :user
 
   validates :content, presence: true
+
+  # Include the user when fetching messages
+  def as_json(options = {})
+    super(options.merge(
+      include: { user: { only: [:id, :name, :username] } },
+      except: [:updated_at]
+    ))
+  end
 
   private
     def broadcast_message

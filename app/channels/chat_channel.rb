@@ -11,26 +11,19 @@ class ChatChannel < ApplicationCable::Channel
     end
   end
 
-
   def unsubscribed
     # Any cleanup needed when channel is unsubscribed
   end
 
   def receive(data)
     conversation = Conversation.find(params[:conversation_id])
-    message = conversation.messages.create!(
+    conversation.messages.create!(
       content: data["content"],
       user: current_user
     )
 
-    # Broadcast the message immediately without waiting for the job
-    message_json = message.as_json(only: [:id, :content, :user_id, :read, :created_at])
-    ChatChannel.broadcast_to(
-      conversation,
-      message_json
-    )
-
-    Rails.logger.info "ChatChannel#receive: Created and broadcast message #{message.id} in conversation #{conversation.id} by user #{current_user&.id}"
+    # Message is broadcast via after_create_commit callback
+    # We don't need to manually broadcast here
   end
 
   def mark_as_read(data)
@@ -39,14 +32,15 @@ class ChatChannel < ApplicationCable::Channel
                .where(read: false)
                .where.not(user_id: current_user.id)
 
-    messages.update_all(read: true)
-
-    ChatChannel.broadcast_to(
-      conversation,
-      {
-        action: "messages_read",
-        reader_id: current_user.id
-      }
-    )
+    if messages.update_all(read: true) > 0
+      # Only broadcast if messages were updated
+      ChatChannel.broadcast_to(
+        conversation,
+        {
+          action: "messages_read",
+          reader_id: current_user.id
+        }
+      )
+    end
   end
 end
