@@ -2,6 +2,14 @@
 
 class TripsController < ApplicationController
   before_action :authenticate_user!
+  before_action :set_trip, only: %i[list_pending_participants]
+
+
+
+
+  def list_pending_participants
+    @trip_participants = @trip.trip_participations.includes(:user).where(approved: false)
+  end
 
   def create
     @trip = Trip.new(trip_params)
@@ -36,5 +44,9 @@ class TripsController < ApplicationController
         :difficulty,
         activities: []
       )
+    end
+
+    def set_trip
+      @trip = Trip.find(params[:id])
     end
 end
