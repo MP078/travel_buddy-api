@@ -69,6 +69,7 @@ class TripsController < ApplicationController
         :difficulty,
         :cover_image,
         :cost,
+        travel_guide: {},
         activities: [],
         highlights: [],
         images: []
