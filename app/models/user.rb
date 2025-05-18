@@ -79,6 +79,17 @@ class User < ApplicationRecord
 
   before_validation :ensure_username
 
+  scope :similar_to, ->(user) {
+    where.not(id: user.id)
+      .where(
+        "similarity(about, ?) > 0.2 OR location = ? OR (interests && ARRAY[?]::varchar[])",
+        user.about, user.location, user.interests
+      )
+      .order(
+        Arel.sql("GREATEST(similarity(about, '#{user.about}'), (CASE WHEN location = '#{user.location}' THEN 1 ELSE 0 END), cardinality(array_cat(interests, ARRAY#{user.interests.inspect}::varchar[]))) DESC")
+      )
+  }
+
   def friends
     (friends_accepted_sent.map(&:receiver) + friends_accepted_received.map(&:requester)).uniq
   end
