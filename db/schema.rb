@@ -81,7 +81,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_18_104132) do
     t.string "average_cost"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.jsonb "travel_guide", default: {}
+    t.float "lat"
+    t.float "lng"
   end
 
   create_table "friendships", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
