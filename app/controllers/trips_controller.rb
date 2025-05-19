@@ -69,7 +69,7 @@ class TripsController < ApplicationController
         :difficulty,
         :cover_image,
         :cost,
-        pins: {},
+        pins: [:lat, :lng], # <-- This line changed!
         methods: [],
         activities: [],
         highlights: [],
