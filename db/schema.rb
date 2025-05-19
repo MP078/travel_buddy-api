@@ -191,7 +191,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_18_104132) do
     t.datetime "updated_at", null: false
     t.string "cost", default: "Rs. 0"
     t.string "highlights", default: [], array: true
-    t.jsonb "travel_guide", default: {}
+    t.jsonb "pins", default: [], comment: "Array of hashes with lat and lng, e.g. [{lat: 12.34, lng: 56.78}]", array: true
+    t.string "methods", default: [], comment: "Array of strings representing the methods of transport, e.g. ['car', 'bike']", array: true
   end
 
   create_table "users", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|

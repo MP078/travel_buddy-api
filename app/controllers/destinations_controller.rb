@@ -44,8 +44,10 @@ class DestinationsController < ApplicationController
         :name, :location, :description, :difficulty,
         :best_time_to_visit, :average_cost,
         :image,
+        :lat,
+        :lng,
         travel_guide: {},
-        activities: [], highlights: [], travel_tips: []
+        activities: [], highlights: []
       )
     end
 end
