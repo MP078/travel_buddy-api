@@ -82,7 +82,7 @@ class User < ApplicationRecord
   scope :similar_to, ->(user) {
     interests_array = user.interests || []
     languages_array = user.languages || []
-    about_query = user.about.to_s.split(/\W+/).reject(&:blank?).join(' | ')
+    about_query = user.about.to_s.split(/\W+/).reject(&:blank?).join(" | ")
     location_query = user.location.to_s
 
     where.not(id: user.id)
