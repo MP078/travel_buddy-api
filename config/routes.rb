@@ -59,10 +59,12 @@ Rails.application.routes.draw do
 
       collection do
         delete :leave
-        get :list_pending_participants
       end
     end
   end
+
+  get "/list_pending_participants", to: "trips#list_pending_participants", as: :list_pending_participants
+
 
   resources :stories, param: :username
 

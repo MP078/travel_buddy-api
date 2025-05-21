@@ -54,6 +54,12 @@ class Trip < ApplicationRecord
   before_validation { self.difficulty = difficulty&.downcase }
 
 
+  def is_organizer?(user)
+    trip_participations.where(user: user).exists?(organizer: true)
+  end
+  def is_participant?(user)
+    trip_participations.where(user: user).exists?
+  end
   def organizers
     trip_participations.organizers.includes(:user).map(&:user)
   end
