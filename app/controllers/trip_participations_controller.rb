@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class TripParticipationsController < ApplicationController
-  before_action :set_trip, except: [:leave]
+  before_action :set_trip, except: [:leave, :pending]
   before_action :set_participation, only: [:destroy, :promote, :approve]
   before_action :authorize_organizer!, only: [:promote, :approve]
   before_action :authorize_removal!, only: [:destroy]
@@ -86,6 +86,11 @@ class TripParticipationsController < ApplicationController
     else
       render json: { errors: @participation.errors.full_messages }, status: :unprocessable_entity
     end
+  end
+
+  def pending
+    @pending_participations = TripParticipation.where(user: current_user, approved: false)
+    render json: @pending_participations, include: :trip
   end
 
 private

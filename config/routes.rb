@@ -51,13 +51,20 @@ Rails.application.routes.draw do
   resources :ratings, only: [:index, :create, :update]
 
   resources :trips do
-    resources :trip_participations, only: [:create, :destroy] do
-      member do
-        post :promote
-        post :approve
-      end
+  resources :trip_participations, only: [:create, :destroy] do
+    member do
+      post :promote
+      post :approve
     end
-    delete "leave", to: "trip_participations#leave", as: :leave_trip_participation
+  end
+
+  delete "leave", to: "trip_participations#leave", as: :leave_trip_participation
+end
+
+  resources :trip_participations, only: [] do
+    collection do
+      get :pending
+    end
   end
 
   get "/list_pending_participants", to: "trips#list_pending_participants", as: :list_pending_participants
