@@ -4,13 +4,20 @@
 #
 # Table name: ratings
 #
-#  id            :uuid             not null, primary key
-#  rateable_type :string           not null
-#  value         :integer          not null
-#  created_at    :datetime         not null
-#  updated_at    :datetime         not null
-#  rateable_id   :uuid             not null
-#  user_id       :uuid             not null
+#  id                    :uuid             not null, primary key
+#  communication         :integer
+#  overall_experience    :integer
+#  rateable_type         :string           not null
+#  recommend             :boolean
+#  reliability           :integer
+#  respect_consideration :integer
+#  review                :text
+#  travel_compatibility  :integer
+#  value                 :integer          not null
+#  created_at            :datetime         not null
+#  updated_at            :datetime         not null
+#  rateable_id           :uuid             not null
+#  user_id               :uuid             not null
 #
 # Indexes
 #

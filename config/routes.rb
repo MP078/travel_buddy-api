@@ -48,7 +48,7 @@ Rails.application.routes.draw do
 
 
   # User ratings routes
-  resources :ratings, only: [:create, :update]
+  resources :ratings, only: [:index, :create, :update]
 
   resources :trips do
     resources :trip_participations, only: [:create, :destroy] do

@@ -4,13 +4,20 @@
 #
 # Table name: ratings
 #
-#  id            :uuid             not null, primary key
-#  rateable_type :string           not null
-#  value         :integer          not null
-#  created_at    :datetime         not null
-#  updated_at    :datetime         not null
-#  rateable_id   :uuid             not null
-#  user_id       :uuid             not null
+#  id                    :uuid             not null, primary key
+#  communication         :integer
+#  overall_experience    :integer
+#  rateable_type         :string           not null
+#  recommend             :boolean
+#  reliability           :integer
+#  respect_consideration :integer
+#  review                :text
+#  travel_compatibility  :integer
+#  value                 :integer          not null
+#  created_at            :datetime         not null
+#  updated_at            :datetime         not null
+#  rateable_id           :uuid             not null
+#  user_id               :uuid             not null
 #
 # Indexes
 #
@@ -28,7 +35,9 @@ class Rating < ApplicationRecord
 
   has_many_attached :images, dependent: :destroy
 
-  validates :value, inclusion: { in: 1..5 }
+  validates :overall_experience, :communication, :reliability, :travel_compatibility, :respect_consideration,
+            inclusion: { in: 1..5 }, allow_nil: true
+  validates :value, presence: true, inclusion: { in: 1..5 }
   validates :user_id, uniqueness: { scope: [:rateable_type, :rateable_id], message: "has already rated this item" }
 
 
