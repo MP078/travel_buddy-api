@@ -27,9 +27,13 @@ class TripParticipationsController < ApplicationController
   end
 
   def destroy
-    @participation.destroy
+    unless @trip.trip_participations.exists?(user: current_user, organizer: true)
+      render json: { error: "Only organizers can remove participants." }, status: :forbidden
+      return
+    end
 
-    head :no_content
+    @participation.destroy
+    render json: { message: "Participation removed." }, status: :ok
   end
 
   def promote
