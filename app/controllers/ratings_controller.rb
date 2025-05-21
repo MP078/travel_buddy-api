@@ -45,6 +45,20 @@ class RatingsController < ApplicationController
     )
     @rating.assign_attributes(rating_params)
 
+    # Calculate value as the average of the five sub-ratings (ignoring nils)
+    subratings = [
+      @rating.overall_experience,
+      @rating.communication,
+      @rating.reliability,
+      @rating.travel_compatibility,
+      @rating.respect_consideration
+    ].compact
+    if subratings.any?
+      @rating.value = (subratings.sum.to_f / subratings.size).round
+    else
+      @rating.value = nil
+    end
+
     if @rating.save
       attach_images if params[:images].present?
       render json: {
