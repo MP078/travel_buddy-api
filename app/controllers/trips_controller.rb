@@ -18,7 +18,7 @@ class TripsController < ApplicationController
 
   def index
     if params[:upcoming].present? && params[:upcoming].to_s == "true" && params[:user_trips] == "false"
-      @trips = Trip.where("start_date >= ?", Date.today).where.not(id: current_user.trips.pluck(:id)).order(start_date: :asc)
+      @trips = Trip.where("start_date > ?", Date.today).where.not(id: current_user.trips.pluck(:id)).order(start_date: :asc)
     elsif params[:upcoming].present? && params[:upcoming].to_s == "true"
       @trips = Trip.where("start_date >= ?", Date.today).order(start_date: :asc)
     elsif params[:username].present?
