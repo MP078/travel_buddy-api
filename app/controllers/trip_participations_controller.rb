@@ -1,11 +1,39 @@
 # frozen_string_literal: true
 
 class TripParticipationsController < ApplicationController
-  before_action :set_trip
+  before_action :set_trip, except: [:leave]
   before_action :set_participation, only: [:destroy, :promote, :approve]
   before_action :authorize_organizer!, only: [:promote, :approve]
   before_action :authorize_removal!, only: [:destroy]
 
+  # Allows a user to leave a trip (delete their participation)
+  def leave
+    trip_participation = TripParticipation.find_by(trip_id: params[:trip_id], user_id: current_user.id)
+    unless trip_participation
+      render json: { error: "You are not a participant in this trip." }, status: :not_found
+      return
+    end
+
+    was_organizer = trip_participation.organizer?
+    trip = trip_participation.trip
+    trip_participation.destroy
+
+    if was_organizer
+      organizers_left = trip.trip_participations.where(organizer: true)
+      if organizers_left.empty?
+        oldest = trip.trip_participations.order(:joined_at).first
+        if oldest
+          oldest.update(organizer: true)
+        else
+          trip.destroy
+          render json: { message: "You left and no one was left, so the trip was deleted." }, status: :ok
+          return
+        end
+      end
+    end
+
+    render json: { message: "You have left the trip." }, status: :ok
+  end
 
   def create
     if @trip.trip_participations.exists?(user: current_user)
@@ -60,32 +88,32 @@ class TripParticipationsController < ApplicationController
     end
   end
 
-  def leave
-    participation = @trip.trip_participations.find_by(user: current_user)
-    unless participation
-      render json: { error: "You are not a participant in this trip." }, status: :not_found
-      return
-    end
+# def leave
+#   participation = @trip.trip_participations.find_by(user: current_user)
+#   unless participation
+#     render json: { error: "You are not a participant in this trip." }, status: :not_found
+#     return
+#   end
 
-    was_organizer = participation.organizer?
-    participation.destroy
+#   was_organizer = participation.organizer?
+#   participation.destroy
 
-    if was_organizer
-      organizers_left = @trip.trip_participations.where(organizer: true)
-      if organizers_left.empty?
-        oldest = @trip.trip_participations.order(:joined_at).first
-        if oldest
-          oldest.update(organizer: true)
-        else
-          @trip.destroy
-          render json: { message: "You left and no one was left, so the trip was deleted." }, status: :ok
-          return
-        end
-      end
-    end
+#   if was_organizer
+#     organizers_left = @trip.trip_participations.where(organizer: true)
+#     if organizers_left.empty?
+#       oldest = @trip.trip_participations.order(:joined_at).first
+#       if oldest
+#         oldest.update(organizer: true)
+#       else
+#         @trip.destroy
+#         render json: { message: "You left and no one was left, so the trip was deleted." }, status: :ok
+#         return
+#       end
+#     end
+#   end
 
-    render json: { message: "You have left the trip." }, status: :ok
-  end
+#   render json: { message: "You have left the trip." }, status: :ok
+# end
 
 private
   def set_trip

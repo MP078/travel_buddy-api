@@ -56,11 +56,8 @@ Rails.application.routes.draw do
         post :promote
         post :approve
       end
-
-      collection do
-        delete :leave
-      end
     end
+    delete "leave", to: "trip_participations#leave", as: :leave_trip_participation
   end
 
   get "/list_pending_participants", to: "trips#list_pending_participants", as: :list_pending_participants
