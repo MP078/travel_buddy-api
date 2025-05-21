@@ -88,33 +88,6 @@ class TripParticipationsController < ApplicationController
     end
   end
 
-# def leave
-#   participation = @trip.trip_participations.find_by(user: current_user)
-#   unless participation
-#     render json: { error: "You are not a participant in this trip." }, status: :not_found
-#     return
-#   end
-
-#   was_organizer = participation.organizer?
-#   participation.destroy
-
-#   if was_organizer
-#     organizers_left = @trip.trip_participations.where(organizer: true)
-#     if organizers_left.empty?
-#       oldest = @trip.trip_participations.order(:joined_at).first
-#       if oldest
-#         oldest.update(organizer: true)
-#       else
-#         @trip.destroy
-#         render json: { message: "You left and no one was left, so the trip was deleted." }, status: :ok
-#         return
-#       end
-#     end
-#   end
-
-#   render json: { message: "You have left the trip." }, status: :ok
-# end
-
 private
   def set_trip
     @trip = Trip.find(params[:trip_id])
