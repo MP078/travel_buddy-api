@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # This file is auto-generated from the current state of the database. Instead
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
@@ -145,6 +143,13 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_18_104132) do
     t.integer "value", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "overall_experience"
+    t.integer "communication"
+    t.integer "reliability"
+    t.integer "travel_compatibility"
+    t.integer "respect_consideration"
+    t.text "review"
+    t.boolean "recommend"
     t.index ["rateable_type", "rateable_id"], name: "index_ratings_on_rateable"
     t.index ["user_id", "rateable_type", "rateable_id"], name: "index_ratings_on_user_and_rateable", unique: true
     t.index ["user_id"], name: "index_ratings_on_user_id"
