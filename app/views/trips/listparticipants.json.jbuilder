@@ -2,4 +2,7 @@
 
 json.message "Trip participants"
 
-json.users @trip_participants, partial: "users/user", as: :user
+json.participants @trip_participants do |participant|
+  json.user participant.user, partial: "users/user", as: :user
+  json.trip participant.trip, partial: "trips/trip", as: :trip
+end

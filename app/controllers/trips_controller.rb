@@ -2,17 +2,18 @@
 
 class TripsController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_trip, only: %i[list_pending_participants]
 
 
 
 
   def list_pending_participants
-    unless @trip.trip_participations.find_by(user: current_user, organizer: true)
-      render json: { error: "Only the organizer can view pending participants." }, status: :forbidden and return
-    end
+    trips = Trip.joins(:trip_participations)
+                .where(trip_participations: { user_id: current_user.id, organizer: true })
 
-    @trip_participants = @trip.trip_participations.includes(:user).where(approved: false)
+    @trip_participants = TripParticipation.includes(:user, :trip)
+                                          .where(trip: trips, approved: false)
+
+    render "trips/listparticipants"
   end
 
   def index
@@ -75,9 +76,5 @@ class TripsController < ApplicationController
         highlights: [],
         images: []
       )
-    end
-
-    def set_trip
-      @trip = Trip.find(params[:id])
     end
 end
