@@ -44,13 +44,13 @@ class TripsController < ApplicationController
             ]
           )
           trip_hash["can_join"] = trip.can_user_join?(@user)
-          trip_hash["members_count"] = trip.users.count
+          trip_hash["members_count"] = trip.approved_participants.count
           trip_hash["cover_image_url"] = trip.cover_image_url
           trip_hash["participation_status"] = trip.participation_status(@user)
           trip_hash["is_organizer"] = is_organizer
           trip_hash["is_participant"] = trip.is_participant?(@user)
-          trip_hash["organizers"] = trip.organizers.map { |org| org.as_json }
-          trip_hash["members"] = trip.users.map { |member| member.as_json }
+          trip_hash["organizers"] = trip.organizers.map { &:as_json }
+          trip_hash["members"] = trip.approved_participants.map {&:as_json }
           trip_hash["image_urls"] = trip.image_urls
           trip_hash["list"] = list if is_organizer
           trip_hash
@@ -81,6 +81,7 @@ class TripsController < ApplicationController
           user: current_user,
           organizer: true,
           approved: true,
+          joined_at: DateTime.current
         )
 
         render json: { success: true, trip: @trip }, status: :created
