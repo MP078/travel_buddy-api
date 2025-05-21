@@ -23,7 +23,10 @@ class TripsController < ApplicationController
       @trips = Trip.where("start_date >= ?", Date.today).order(start_date: :asc)
     elsif params[:username].present?
       @user = User.find_by(username: params[:username])
-      @trips = @user.trips.includes(:trip_participations, :users).order(created_at: :desc)
+      @trips = Trip.joins(:trip_participations)
+               .where(trip_participations: { user_id: @user.id, approved: true })
+               .includes(:trip_participations, :users)
+               .order(created_at: :desc)
 
       render json: {
         message: "Trips loaded successfully",
@@ -49,8 +52,8 @@ class TripsController < ApplicationController
           trip_hash["participation_status"] = trip.participation_status(@user)
           trip_hash["is_organizer"] = is_organizer
           trip_hash["is_participant"] = trip.is_participant?(@user)
-          trip_hash["organizers"] = trip.organizers.map { &:as_json }
-          trip_hash["members"] = trip.approved_participants.map {&:as_json }
+          trip_hash["organizers"] = trip.organizers.map { |org| org.as_json }
+          trip_hash["members"] = trip.approved_participants.map { |member| member.as_json }
           trip_hash["image_urls"] = trip.image_urls
           trip_hash["list"] = list if is_organizer
           trip_hash
