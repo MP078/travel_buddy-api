@@ -125,7 +125,7 @@ class User < ApplicationRecord
   end
 
   def travel_days
-    trips.sum do |trip|
+    joined_trips.sum do |trip|
       if trip.start_date && trip.end_date
         (trip.end_date - trip.start_date).to_i + 1
       else
