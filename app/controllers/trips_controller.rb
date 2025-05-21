@@ -24,6 +24,39 @@ class TripsController < ApplicationController
     elsif params[:username].present?
       @user = User.find_by(username: params[:username])
       @trips = @user.trips.includes(:trip_participations, :users).order(created_at: :desc)
+
+      render json: {
+        message: "Trips loaded successfully",
+        data: @trips.map { |trip|
+          is_organizer = trip.is_organizer?(@user)
+          # Build the list array: username and trip_participation_id for each member
+          list = trip.trip_participations.includes(:user).map do |tp|
+            {
+              username: tp.user.username,
+              trip_participation_id: tp.id
+            }
+          end
+
+          # Existing trip serialization (add your fields as needed)
+          trip_hash = trip.as_json(
+            only: [
+              :id, :title, :location, :start_date, :end_date, :maximum_participants, :activities, :description, :difficulty, :created_at, :updated_at, :highlights, :cost, :pins, :methods
+            ]
+          )
+          trip_hash["can_join"] = trip.can_user_join?(@user)
+          trip_hash["members_count"] = trip.users.count
+          trip_hash["cover_image_url"] = trip.cover_image_url
+          trip_hash["participation_status"] = trip.participation_status(@user)
+          trip_hash["is_organizer"] = is_organizer
+          trip_hash["is_participant"] = trip.is_participant?(@user)
+          trip_hash["organizers"] = trip.organizers.map { |org| org.as_json }
+          trip_hash["members"] = trip.users.map { |member| member.as_json }
+          trip_hash["image_urls"] = trip.image_urls
+          trip_hash["list"] = list if is_organizer
+          trip_hash
+        }
+      }
+      nil
     elsif params[:location].present?
       @trips = Trip.where(location: params[:location])
     elsif params[:activity].present?
