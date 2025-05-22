@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_05_18_104132) do
+ActiveRecord::Schema[8.0].define(version: 2025_05_22_065238) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -81,6 +81,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_18_104132) do
     t.datetime "updated_at", null: false
     t.float "lat"
     t.float "lng"
+    t.integer "pdf_views"
+    t.integer "pdf_downloads"
   end
 
   create_table "friendships", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|

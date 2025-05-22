@@ -44,7 +44,13 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :destinations
+  resources :destinations do
+  member do
+    post :upload_pdf
+    get :view_pdf
+    get :download_pdf
+  end
+end
 
 
   # User ratings routes

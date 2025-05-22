@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 class DestinationsController < ApplicationController
-  before_action :set_destination, only: [:show, :update, :destroy]
-  before_action :authenticate_user!, only: [:create]
+  before_action :set_destination, only: [:show, :update, :destroy, :view_pdf, :download_pdf, :upload_pdf]
+  before_action :authenticate_user!, except: [:index]
 
   def index
     @destinations = Destination.all
@@ -33,6 +33,36 @@ class DestinationsController < ApplicationController
     @destination.destroy
     head :no_content
   end
+  def upload_pdf
+    @destination = Destination.find(params[:id])
+    @destination.pdf.attach(params[:pdf])
+    @destination.update(pdf_views: 0, pdf_downloads: 0)
+    render json: { success: true }
+  end
+
+  def view_pdf
+    if @destination.pdf.attached?
+      @destination.increment!(:pdf_views)
+      send_data @destination.pdf.download,
+                filename: @destination.pdf.filename.to_s,
+                type: @destination.pdf.content_type,
+                disposition: "inline"
+    else
+      render json: { error: "PDF not found" }, status: :not_found
+    end
+  end
+
+  def download_pdf
+    if @destination.pdf.attached?
+      @destination.increment!(:pdf_downloads)
+      send_data @destination.pdf.download,
+                filename: @destination.pdf.filename.to_s,
+                type: @destination.pdf.content_type,
+                disposition: "attachment"
+    else
+      render json: { error: "PDF not found" }, status: :not_found
+    end
+  end
 
   private
     def set_destination
@@ -46,6 +76,7 @@ class DestinationsController < ApplicationController
         :image,
         :lat,
         :lng,
+        :pdf,
         travel_guide: {},
         activities: [], highlights: []
       )
