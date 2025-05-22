@@ -53,7 +53,9 @@ class TripsController < ApplicationController
           trip_hash["is_organizer"] = is_organizer
           trip_hash["is_participant"] = trip.is_participant?(@user)
           trip_hash["organizers"] = trip.organizers.map { |org| org.as_json }
-          trip_hash["members"] = trip.approved_participants.map { |member| member.as_json }
+          trip_hash["members"] = trip.approved_participants.map do |member|
+            member.as_json.merge(avatar_url: member.avatar_url)
+          end
           trip_hash["image_urls"] = trip.image_urls
           trip_hash["list"] = list if is_organizer
           trip_hash
