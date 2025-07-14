@@ -53,7 +53,7 @@ group :development do
   gem "rubocop"
   gem "rubocop-performance"
   gem "rubocop-rails"
-  gem "annotaterb", "~> 4.14"
+  gem "annotaterb", "~> 4.17"
 end
 
 
